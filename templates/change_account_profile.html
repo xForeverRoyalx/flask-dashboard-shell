@@ -1,0 +1,168 @@
+{% extends "dashboard_base.html" %}
+
+{% block page_title %}{% if edit_mode %}Edit Profile{% else %}Set Up Your Account{% endif %}{% endblock %}
+
+{% block content %}
+
+{% if not edit_mode %}
+<!-- ---- First-run step indicator ---- -->
+<div class="step-indicator animate-fade-in">
+  <div class="step is-done">
+    <div class="step__dot">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="2,5 4.5,7.5 8.5,3"/>
+      </svg>
+    </div>
+    <span>Account</span>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step is-active">
+    <div class="step__dot">2</div>
+    <span>Profile</span>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step">
+    <div class="step__dot">3</div>
+    <span>Photo</span>
+  </div>
+</div>
+{% endif %}
+
+<!-- ---- Page header ---- -->
+<header class="page-header animate-fade-up">
+  <div class="page-header__eyebrow">
+    {% if edit_mode %}Account{% else %}Getting started{% endif %}
+  </div>
+  <h1 class="page-header__title">
+    {% if edit_mode %}Edit your profile{% else %}Let's get your name down{% endif %}
+  </h1>
+  <p class="page-header__subtitle">
+    {% if edit_mode %}
+      Update the details below. Your email will need to be re-confirmed if changed.
+    {% else %}
+      Just your name and email — that's all we need to get you in.
+    {% endif %}
+  </p>
+</header>
+
+<!-- ---- Form card ---- -->
+<div class="card animate-fade-up delay-1" style="max-width: 540px;">
+
+  <form
+    method="POST"
+    action="{{ url_for('account_edit') if edit_mode else url_for('account_setup') }}"
+    novalidate
+  >
+
+    <!-- Name row -->
+    <div class="form-row">
+
+      <div class="form-group">
+        <label for="first_name" class="form-label">First name</label>
+        <input
+          type="text"
+          id="first_name"
+          name="first_name"
+          class="form-input {% if errors.first_name %}is-error{% endif %}"
+          value="{{ form_data.get('first_name', '') }}"
+          placeholder="First"
+          autocomplete="given-name"
+          autofocus
+          required
+        />
+        {% if errors.first_name %}
+        <span class="form-error" role="alert">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="5.5" cy="5.5" r="5"/>
+            <line x1="5.5" y1="3.5" x2="5.5" y2="5.5"/>
+            <line x1="5.5" y1="7.5" x2="5.5" y2="7.6"/>
+          </svg>
+          {{ errors.first_name }}
+        </span>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="last_name" class="form-label">Last name</label>
+        <input
+          type="text"
+          id="last_name"
+          name="last_name"
+          class="form-input {% if errors.last_name %}is-error{% endif %}"
+          value="{{ form_data.get('last_name', '') }}"
+          placeholder="Last"
+          autocomplete="family-name"
+          required
+        />
+        {% if errors.last_name %}
+        <span class="form-error" role="alert">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="5.5" cy="5.5" r="5"/>
+            <line x1="5.5" y1="3.5" x2="5.5" y2="5.5"/>
+            <line x1="5.5" y1="7.5" x2="5.5" y2="7.6"/>
+          </svg>
+          {{ errors.last_name }}
+        </span>
+        {% endif %}
+      </div>
+
+    </div><!-- /form-row -->
+
+    <div class="form-divider"></div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email" class="form-label">Email address</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        class="form-input {% if errors.email %}is-error{% endif %}"
+        value="{{ form_data.get('email', '') }}"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      />
+      {% if errors.email %}
+      <span class="form-error" role="alert">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5.5" cy="5.5" r="5"/>
+          <line x1="5.5" y1="3.5" x2="5.5" y2="5.5"/>
+          <line x1="5.5" y1="7.5" x2="5.5" y2="7.6"/>
+        </svg>
+        {{ errors.email }}
+      </span>
+      {% elif not edit_mode %}
+      <span class="form-hint">
+        We'll send a confirmation link after you save.
+      </span>
+      {% elif edit_mode and account.email_confirmed %}
+      <span class="form-hint text-success">
+        ✓ Confirmed — changing this will require re-confirmation.
+      </span>
+      {% else %}
+      <span class="form-hint text-warning">
+        Not yet confirmed.
+      </span>
+      {% endif %}
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn--primary">
+        {% if edit_mode %}Save changes{% else %}Continue{% endif %}
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="2" y1="7" x2="12" y2="7"/>
+          <polyline points="8,3 12,7 8,11"/>
+        </svg>
+      </button>
+      {% if edit_mode %}
+      <a href="{{ url_for('account_profile') }}" class="btn btn--link text-secondary">Cancel</a>
+      {% endif %}
+    </div>
+
+  </form>
+
+</div><!-- /card -->
+
+{% endblock %}

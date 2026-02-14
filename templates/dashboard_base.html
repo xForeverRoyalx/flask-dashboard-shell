@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block page_title %}Dashboard{% endblock %} — {{ app_name | default('DashShell') }}</title>
+
+  <!-- Fonts: Syne (display) + DM Sans (body) + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- ====================================================================
+         SIDEBAR
+         ==================================================================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+
+      <!-- Nav links -->
+      <nav class="sidebar__nav">
+
+        <!-- Collapse toggle lives at the top of the nav rail -->
+        <div class="sidebar__toggle-wrap">
+          <button
+            class="sidebar__toggle"
+            id="sidebar-toggle"
+            aria-label="Collapse navigation"
+            aria-expanded="true"
+            aria-controls="sidebar"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="7.5,2 3.5,6 7.5,10"/>
+            </svg>
+          </button>
+        </div>
+
+        <span class="sidebar__section-label">Main</span>
+
+        <a href="{{ url_for('account_profile') }}"
+           class="nav-item {% if request.endpoint == 'account_profile' %}is-active{% endif %}">
+          <svg class="nav-item__icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="6" height="6" rx="1"/>
+            <rect x="10" y="2" width="6" height="6" rx="1"/>
+            <rect x="2" y="10" width="6" height="6" rx="1"/>
+            <rect x="10" y="10" width="6" height="6" rx="1"/>
+          </svg>
+          <span class="nav-item__label">Overview</span>
+          <span class="nav-tooltip">Overview</span>
+        </a>
+
+        <span class="sidebar__section-label">Account</span>
+
+        <a href="{{ url_for('account_profile') }}"
+           class="nav-item {% if request.endpoint in ('account_profile', 'account_edit', 'account_setup') %}is-active{% endif %}">
+          <svg class="nav-item__icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="6" r="3.5"/>
+            <path d="M2 17c0-3.866 3.134-7 7-7s7 3.134 7 7"/>
+          </svg>
+          <span class="nav-item__label">Profile</span>
+          <span class="nav-tooltip">Profile</span>
+        </a>
+
+        <a href="#"
+           class="nav-item {% if request.endpoint == 'settings' %}is-active{% endif %}">
+          <svg class="nav-item__icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="9" r="2.5"/>
+            <path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.05 3.05l1.41 1.41M13.54 13.54l1.41 1.41M3.05 14.95l1.41-1.41M13.54 4.46l1.41-1.41"/>
+          </svg>
+          <span class="nav-item__label">Settings</span>
+          <span class="nav-tooltip">Settings</span>
+        </a>
+
+        <a href="#"
+           class="nav-item">
+          <svg class="nav-item__icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="14" height="11" rx="1"/>
+            <path d="M6 4V3a1 1 0 012 0v1M10 4V3a1 1 0 012 0v1"/>
+            <line x1="5" y1="9" x2="13" y2="9"/>
+            <line x1="5" y1="12" x2="10" y2="12"/>
+          </svg>
+          <span class="nav-item__label">Billing</span>
+          <span class="nav-tooltip">Billing</span>
+        </a>
+
+      </nav><!-- /nav -->
+
+      <div class="sidebar__footer">
+        <span class="sidebar__footer-text">v0.1.0</span>
+      </div>
+
+    </aside><!-- /sidebar -->
+
+
+    <!-- ====================================================================
+         MAIN CONTENT
+         ==================================================================== -->
+    <main class="main-content" id="main-content">
+
+      <!-- Window topbar: logo upper-left, user chip upper-right -->
+      <div class="window-topbar">
+        <a href="{{ url_for('index') }}" class="window-topbar__logo">
+          <div class="sidebar__logo-icon">DS</div>
+          <span class="window-topbar__logo-name">{{ app_name | default('DashShell') }}</span>
+        </a>
+        <div class="window-topbar__right">
+          {% if account is defined and account.profile_complete %}
+          <a href="{{ url_for('account_profile') }}" class="user-chip" aria-label="Account profile">
+            <div class="user-chip__avatar" aria-hidden="true">
+              {{ (account.first_name[0] ~ account.last_name[0]) | upper if account.first_name else '?' }}
+            </div>
+            <div class="user-chip__info">
+              <div class="user-chip__name">{{ account.first_name }} {{ account.last_name }}</div>
+              <div class="user-chip__role">Account</div>
+            </div>
+          </a>
+          {% else %}
+          <a href="{{ url_for('account_setup') }}" class="user-chip" aria-label="Complete your profile">
+            <div class="user-chip__avatar" aria-hidden="true">?</div>
+            <div class="user-chip__info">
+              <div class="user-chip__name" style="color: var(--color-text-muted);">Set up profile</div>
+              <div class="user-chip__role">Incomplete</div>
+            </div>
+          </a>
+          {% endif %}
+        </div>
+      </div><!-- /window-topbar -->
+
+      <div class="content-container">
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <ul class="flash-list animate-fade-in" role="alert">
+            {% for category, message in messages %}
+            <li class="flash flash--{{ category }}">
+              {% if category == 'success' %}
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <polyline points="2,7 5.5,10.5 12,4"/>
+              </svg>
+              {% else %}
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="7" y1="4" x2="7" y2="7.5"/>
+                <line x1="7" y1="10" x2="7" y2="10.5"/>
+                <circle cx="7" cy="7" r="6"/>
+              </svg>
+              {% endif %}
+              {{ message }}
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Page content injected by child templates -->
+        {% block content %}{% endblock %}
+
+      </div>
+    </main>
+
+  </div><!-- /app-shell -->
+
+
+  <!-- ======================================================================
+       MOBILE FOOTER NAV
+       ====================================================================== -->
+  <nav class="mobile-footer-nav" aria-label="Quick navigation">
+    <a href="{{ url_for('account_profile') }}"
+       class="mobile-footer-nav__item {% if request.endpoint == 'account_profile' %}is-active{% endif %}">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <rect x="2" y="2" width="7" height="7" rx="1"/>
+        <rect x="11" y="2" width="7" height="7" rx="1"/>
+        <rect x="2" y="11" width="7" height="7" rx="1"/>
+        <rect x="11" y="11" width="7" height="7" rx="1"/>
+      </svg>
+      Home
+    </a>
+
+    <a href="{{ url_for('account_profile') }}"
+       class="mobile-footer-nav__item {% if request.endpoint in ('account_profile','account_edit','account_setup') %}is-active{% endif %}">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="10" cy="7" r="4"/>
+        <path d="M2 20c0-4.418 3.582-8 8-8s8 3.582 8 8"/>
+      </svg>
+      Profile
+    </a>
+
+    <a href="#" class="mobile-footer-nav__item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="10" cy="10" r="3"/>
+        <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"/>
+      </svg>
+      Settings
+    </a>
+
+    <a href="#" class="mobile-footer-nav__item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <rect x="2" y="5" width="16" height="12" rx="1"/>
+        <path d="M6 5V4a2 2 0 014 0v1"/>
+      </svg>
+      Billing
+    </a>
+  </nav>
+
+
+  <!-- ======================================================================
+       SCRIPTS
+       ====================================================================== -->
+  <script>
+    (function () {
+      const sidebar = document.getElementById('sidebar');
+      const toggle  = document.getElementById('sidebar-toggle');
+      const STORAGE_KEY = 'sidebar_collapsed';
+
+      // Restore state from localStorage
+      if (localStorage.getItem(STORAGE_KEY) === '1') {
+        sidebar.classList.add('is-collapsed');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      toggle.addEventListener('click', function () {
+        const isCollapsed = sidebar.classList.toggle('is-collapsed');
+        localStorage.setItem(STORAGE_KEY, isCollapsed ? '1' : '0');
+        toggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+        toggle.setAttribute('aria-label', isCollapsed ? 'Expand navigation' : 'Collapse navigation');
+      });
+    })();
+  </script>
+
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

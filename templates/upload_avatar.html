@@ -1,0 +1,115 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Add a Photo{% endblock %}
+
+{% block content %}
+
+<div class="step-indicator animate-fade-in">
+  <div class="step is-done">
+    <div class="step__dot">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,5 4.5,7.5 8.5,3"/></svg>
+    </div>
+    <span>Account</span>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step is-done">
+    <div class="step__dot">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,5 4.5,7.5 8.5,3"/></svg>
+    </div>
+    <span>Profile</span>
+  </div>
+  <div class="step-connector"></div>
+  <div class="step is-active">
+    <div class="step__dot">3</div>
+    <span>Photo</span>
+  </div>
+</div>
+
+<header class="page-header animate-fade-up">
+  <div class="page-header__eyebrow">Getting started</div>
+  <h1 class="page-header__title">Add a profile photo</h1>
+  <p class="page-header__subtitle">Put a face to the name. You can always change this later.</p>
+</header>
+
+<div class="card animate-fade-up delay-1" style="max-width: 480px;">
+  <form method="POST" action="{{ url_for('account_avatar') }}" enctype="multipart/form-data">
+
+    {% if error %}
+    <div class="flash flash--danger mb-6" role="alert">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="7" cy="7" r="6"/><line x1="7" y1="4" x2="7" y2="7.5"/><line x1="7" y1="10" x2="7" y2="10.5"/>
+      </svg>
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Drop zone -->
+    <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="Upload photo">
+      <div class="upload-zone__preview" id="preview-wrap" style="display:none;">
+        <img id="preview-img" src="" alt="Preview" class="upload-zone__img" />
+      </div>
+      <div class="upload-zone__prompt" id="upload-prompt">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="16" cy="16" r="14"/>
+          <line x1="16" y1="10" x2="16" y2="22"/>
+          <line x1="10" y1="16" x2="22" y2="16"/>
+        </svg>
+        <span class="upload-zone__label">Drop image here or <u>click to browse</u></span>
+        <span class="upload-zone__hint">PNG, JPG, GIF, WEBP — max 5 MB</span>
+      </div>
+      <input type="file" name="avatar" id="avatar-input" accept="image/*" class="upload-zone__input" aria-hidden="true" tabindex="-1" />
+    </div>
+
+    <div class="form-actions" style="padding-top: var(--space-5);">
+      <button type="submit" class="btn btn--primary" id="upload-btn" disabled>
+        Save photo
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/>
+        </svg>
+      </button>
+      <button type="submit" name="skip" value="1" class="btn btn--link text-secondary">Skip for now</button>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const zone    = document.getElementById('upload-zone');
+  const input   = document.getElementById('avatar-input');
+  const prompt  = document.getElementById('upload-prompt');
+  const preview = document.getElementById('preview-wrap');
+  const img     = document.getElementById('preview-img');
+  const btn     = document.getElementById('upload-btn');
+
+  function loadFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      img.src = e.target.result;
+      preview.style.display = 'block';
+      prompt.style.display  = 'none';
+      btn.disabled = false;
+      zone.classList.add('has-file');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Click to browse
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') input.click(); });
+  input.addEventListener('change', () => loadFile(input.files[0]));
+
+  // Drag and drop
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('is-dragover'); });
+  zone.addEventListener('dragleave', ()  => zone.classList.remove('is-dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('is-dragover');
+    loadFile(e.dataTransfer.files[0]);
+  });
+})();
+</script>
+{% endblock %}
