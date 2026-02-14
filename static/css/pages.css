@@ -1,0 +1,19 @@
+/* ==========================================================================
+   pages.css — Page-specific overrides
+   ========================================================================== */
+
+/* account_profile.html */
+.profile-field {
+  display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.profile-field:last-child { border-bottom: none; }
+.profile-field__label {
+  font-size: var(--text-xs); font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-widest); text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.profile-field__value { font-size: var(--text-base); color: var(--color-text-primary); }
+.profile-field__value.is-unset { color: var(--color-text-muted); font-style: italic; }
+.profile-email-status { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); }

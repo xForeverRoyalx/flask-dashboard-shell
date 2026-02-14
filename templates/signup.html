@@ -1,0 +1,95 @@
+{% extends "dashboard_base.html" %}
+{% set auth_mode = true %}
+{% block page_title %}Create Account{% endblock %}
+
+{% block content %}
+<div class="auth-content">
+<div class="auth-card animate-fade-up">
+
+  <h1 class="auth-heading">Create an account</h1>
+  <p class="auth-subheading">Get started — it only takes a minute</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="flash flash--{{ category }} mb-6" role="alert">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- Social -->
+  <a href="#" class="social-btn">
+    <svg viewBox="0 0 18 18" fill="none">
+      <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+      <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+      <path d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
+      <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+    </svg>
+    Continue with Google
+  </a>
+  <a href="#" class="social-btn">
+    <svg viewBox="0 0 18 18" fill="currentColor">
+      <path d="M9 .5A8.5 8.5 0 00.5 9a8.5 8.5 0 005.813 8.073c.425.078.58-.184.58-.41 0-.2-.007-.732-.011-1.437-2.364.514-2.863-1.139-2.863-1.139-.387-.982-.944-1.244-.944-1.244-.772-.527.058-.517.058-.517.853.06 1.302.876 1.302.876.758 1.299 1.99.924 2.475.707.077-.549.297-.924.54-1.137-1.887-.215-3.868-.943-3.868-4.198 0-.927.331-1.686.874-2.28-.088-.215-.379-1.079.083-2.247 0 0 .712-.228 2.332.87A8.13 8.13 0 019 4.865c.72.003 1.446.097 2.124.285 1.619-1.098 2.33-.87 2.33-.87.463 1.168.172 2.032.085 2.247.544.594.873 1.353.873 2.28 0 3.263-1.984 3.98-3.876 4.191.305.263.576.78.576 1.572 0 1.135-.01 2.05-.01 2.329 0 .228.153.492.584.409A8.502 8.502 0 0017.5 9 8.5 8.5 0 009 .5z"/>
+    </svg>
+    Continue with GitHub
+  </a>
+
+  <div class="auth-divider">or</div>
+
+  <form method="POST" action="{{ url_for('signup') }}" novalidate>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="first_name" class="form-label">First name</label>
+        <input type="text" id="first_name" name="first_name"
+               class="form-input {% if errors.first_name %}is-error{% endif %}"
+               value="{{ form_data.get('first_name', '') }}"
+               placeholder="First" autocomplete="given-name" required />
+        {% if errors.first_name %}<span class="form-error">{{ errors.first_name }}</span>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="last_name" class="form-label">Last name</label>
+        <input type="text" id="last_name" name="last_name"
+               class="form-input {% if errors.last_name %}is-error{% endif %}"
+               value="{{ form_data.get('last_name', '') }}"
+               placeholder="Last" autocomplete="family-name" required />
+        {% if errors.last_name %}<span class="form-error">{{ errors.last_name }}</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email" class="form-label">Email address</label>
+      <input type="email" id="email" name="email"
+             class="form-input {% if errors.email %}is-error{% endif %}"
+             value="{{ form_data.get('email', '') }}"
+             placeholder="you@example.com" autocomplete="email" required />
+      {% if errors.email %}<span class="form-error">{{ errors.email }}</span>{% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" id="password" name="password"
+             class="form-input {% if errors.password %}is-error{% endif %}"
+             placeholder="Min. 8 characters" autocomplete="new-password" required />
+      {% if errors.password %}<span class="form-error">{{ errors.password }}</span>{% endif %}
+    </div>
+
+    <div class="form-group" style="margin-bottom: var(--space-6);">
+      <label for="confirm_password" class="form-label">Confirm password</label>
+      <input type="password" id="confirm_password" name="confirm_password"
+             class="form-input {% if errors.confirm_password %}is-error{% endif %}"
+             placeholder="••••••••" autocomplete="new-password" required />
+      {% if errors.confirm_password %}<span class="form-error">{{ errors.confirm_password }}</span>{% endif %}
+    </div>
+
+    <button type="submit" class="btn btn--primary w-full" style="justify-content:center;">
+      Create account
+    </button>
+
+  </form>
+
+  <p class="auth-footer-text">
+    Already have an account? <a href="{{ url_for('signin') }}">Sign in</a>
+  </p>
+
+</div>
+</div>
+{% endblock %}
