@@ -1,0 +1,41 @@
+# Environment & secrets
+.env
+*.json
+venv/
+.venv/
+
+# Database & instance data
+instance/
+data/
+
+# Passenger / Namecheap hosting
+passenger_wsgi.py
+tmp/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Egg / build artifacts
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+standards.txt
+update_standards.py
