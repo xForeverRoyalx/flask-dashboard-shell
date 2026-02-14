@@ -59,18 +59,7 @@
             <span class="nav-item__label">Overview</span>
             <span class="nav-tooltip">Overview</span>
           </a>
-
-          <span class="sidebar__section-label">Account</span>
-
-          <a href="{{ url_for('account_profile') }}"
-             class="nav-item {% if request.endpoint in ('account_profile','account_edit','account_setup') %}is-active{% endif %}">
-            <svg class="nav-item__icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="6" r="3.5"/><path d="M2 17c0-3.866 3.134-7 7-7s7 3.134 7 7"/>
-            </svg>
-            <span class="nav-item__label">Profile</span>
-            <span class="nav-tooltip">Profile</span>
-          </a>
-
+		  
         </nav>
 
         <div class="sidebar__footer">
@@ -102,26 +91,34 @@
           <div class="sidebar__logo-icon">DS</div>
           <span class="window-topbar__logo-name">{{ app_name | default('DashShell') }}</span>
         </a>
-        <div class="window-topbar__right">
-          {% if account is defined and account.profile_complete %}
-          <a href="{{ url_for('account_profile') }}" class="user-chip" aria-label="Account profile">
-            <div class="user-chip__avatar" aria-hidden="true">
-              {{ (account.first_name[0] ~ account.last_name[0]) | upper if account.first_name else '?' }}
+		<div class="window-topbar__right">
+          <div class="user-chip-wrap" id="user-chip-wrap">
+            {% if account is defined and account.profile_complete %}
+            <button class="user-chip" id="user-chip-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+              <div class="user-chip__avatar" aria-hidden="true">
+                {{ (account.first_name[0] ~ account.last_name[0]) | upper if account.first_name else '?' }}
+              </div>
+              <div class="user-chip__info">
+                <div class="user-chip__name">{{ account.first_name }} {{ account.last_name }}</div>
+                <div class="user-chip__role">Account</div>
+              </div>
+            </button>
+            {% else %}
+            <button class="user-chip" id="user-chip-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+              <div class="user-chip__avatar" aria-hidden="true">?</div>
+              <div class="user-chip__info">
+                <div class="user-chip__name" style="color: var(--color-text-muted);">Set up profile</div>
+                <div class="user-chip__role">Incomplete</div>
+              </div>
+            </button>
+            {% endif %}
+            <div class="user-chip-dropdown" id="user-chip-dropdown" role="menu" aria-hidden="true">
+              <a href="{{ url_for('account_profile') }}" class="user-chip-dropdown__item" role="menuitem">Profile</a>
+              <a href="{{ url_for('account_edit') }}" class="user-chip-dropdown__item" role="menuitem">Edit Account</a>
+              <div class="user-chip-dropdown__divider"></div>
+              <a href="{{ url_for('logout') }}" class="user-chip-dropdown__item user-chip-dropdown__item--danger" role="menuitem">Log out</a>
             </div>
-            <div class="user-chip__info">
-              <div class="user-chip__name">{{ account.first_name }} {{ account.last_name }}</div>
-              <div class="user-chip__role">Account</div>
-            </div>
-          </a>
-          {% else %}
-          <a href="{{ url_for('account_setup') }}" class="user-chip" aria-label="Complete your profile">
-            <div class="user-chip__avatar" aria-hidden="true">?</div>
-            <div class="user-chip__info">
-              <div class="user-chip__name" style="color: var(--color-text-muted);">Set up profile</div>
-              <div class="user-chip__role">Incomplete</div>
-            </div>
-          </a>
-          {% endif %}
+          </div>
         </div>
       </div><!-- /window-topbar -->
 
@@ -224,6 +221,28 @@
           toggle.setAttribute('aria-label', isCollapsed ? 'Expand navigation' : 'Collapse navigation');
         });
       }
+    })();
+	
+	(function () {
+      const wrap    = document.getElementById('user-chip-wrap');
+      const btn     = document.getElementById('user-chip-btn');
+      const dropdown = document.getElementById('user-chip-dropdown');
+      if (!btn) return;
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = dropdown.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        dropdown.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!wrap.contains(e.target)) {
+          dropdown.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+          dropdown.setAttribute('aria-hidden', 'true');
+        }
+      });
     })();
   </script>
 

@@ -209,11 +209,23 @@
    -------------------------------------------------------------------------- */
 
 .window-topbar {
+  position: sticky;
+  top: 0;
   display: flex; align-items: center; justify-content: space-between;
   padding: var(--space-5) var(--space-2) var(--space-6);
   gap: var(--space-4);
   flex-shrink: 0;
+  z-index: var(--z-raised);
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-page) 0%,
+    var(--color-bg-page) 60%,
+    transparent 100%
+  );
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
+
 .window-topbar__logo {
   display: flex; align-items: center; gap: var(--space-3);
   text-decoration: none;
@@ -241,6 +253,8 @@
   text-decoration: none;
   transition: border-color var(--t-fast), background var(--t-fast);
   overflow: hidden;
+  cursor: pointer;
+  font-family: inherit;
 }
 .user-chip:hover { border-color: var(--color-border-strong); background: var(--color-bg-overlay); }
 
@@ -268,6 +282,34 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
+/* User chip dropdown */
+.user-chip-wrap {
+  position: relative;
+}
+.user-chip-dropdown {
+  display: none;
+  position: absolute; top: calc(100% + var(--space-2)); right: 0;
+  min-width: 160px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  overflow: hidden;
+}
+.user-chip-dropdown.is-open { display: block; }
+.user-chip-dropdown__item {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm); color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.user-chip-dropdown__item:hover { background: var(--color-bg-elevated); color: var(--color-text-primary); }
+.user-chip-dropdown__item--danger { color: var(--color-danger); }
+.user-chip-dropdown__item--danger:hover { background: var(--color-danger-dim); color: var(--color-danger); }
+.user-chip-dropdown__divider { height: 1px; background: var(--color-border); margin: var(--space-1) 0; }
+
 
 /* --------------------------------------------------------------------------
    Main content
@@ -277,13 +319,24 @@
   flex: 1;
   margin-left: var(--sidebar-width);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   padding: 0 var(--space-10) var(--space-10);
   transition: margin-left var(--sidebar-transition);
 }
 .sidebar.is-collapsed ~ .main-content { margin-left: var(--sidebar-rail); }
 .sidebar--auth ~ .main-content { margin-left: var(--sidebar-rail); }
 
-.content-container { max-width: var(--content-max); margin: 0 auto; }
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: var(--content-max);
+  width: 100%;
+  margin: 0 auto;
+}
 
 .page-header { margin-bottom: var(--space-10); }
 .page-header__eyebrow {
