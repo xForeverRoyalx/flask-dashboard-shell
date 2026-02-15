@@ -18,9 +18,13 @@
 
   <!-- Left: avatar + quick info -->
   <div class="card card--flat flex-col items-center" style="text-align:center; gap: var(--space-5); padding: var(--space-8);">
-    <div class="avatar avatar--xl avatar--accent" role="img" aria-label="Profile avatar">
-      {{ (account.first_name[0] ~ account.last_name[0]) | upper }}
-    </div>
+	<div class="avatar--xl" aria-hidden="true">
+	  {% if current_user.avatar_url %}
+	  <img src="{{ current_user.avatar_url }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:9999px;" />
+	  {% else %}
+	  {{ (current_user.first_name[0] ~ current_user.last_name[0]) | upper if current_user.first_name else '?' }}
+	  {% endif %}
+	</div>
     <div class="flex-col" style="gap: var(--space-1); align-items: center;">
       <h2 style="font-size: var(--text-xl); margin: 0;">
         {{ account.first_name }} {{ account.last_name }}
@@ -38,7 +42,7 @@
       </div>
     </div>
 
-    <a href="{{ url_for('account_edit') }}" class="btn btn--ghost w-full" style="justify-content:center;">
+    <a href="{{ url_for('dashboard.account_edit') }}" class="btn btn--ghost w-full" style="justify-content:center;">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9.5 1.5l2 2L4 11H2v-2L9.5 1.5z"/>
       </svg>
@@ -94,7 +98,7 @@
 
 <!-- Dev reset link — remove in production -->
 <p class="text-xs text-muted" style="margin-top: var(--space-8);">
-  Dev: <a href="{{ url_for('dev_reset') }}" class="text-accent" style="font-size: var(--text-xs);">Reset session →</a>
+  Dev: <a href="{{ url_for('dashboard.dev_reset') }}" class="text-accent" style="font-size: var(--text-xs);">Reset session →</a>
 </p>
 
 {% endblock %}

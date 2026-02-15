@@ -36,7 +36,7 @@
       <span class="badge badge--warning">!</span>
       <span class="text-sm">
         Photo not added —
-        <a href="{{ url_for('account_avatar') }}" class="text-accent">add one now</a>
+        <a href="{{ url_for('dashboard.account_avatar') }}" class="text-accent">add one now</a>
       </span>
       {% endif %}
     </div>
@@ -44,6 +44,6 @@
 </div>
 
 <p class="text-xs text-muted" style="margin-top: var(--space-8);">
-  Dev: <a href="{{ url_for('dev_reset') }}" class="text-accent text-xs">Reset session →</a>
+  Dev: <a href="{{ url_for('dashboard.dev_reset') }}" class="text-accent text-xs">Reset session →</a>
 </p>
 {% endblock %}

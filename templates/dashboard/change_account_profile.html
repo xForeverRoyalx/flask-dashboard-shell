@@ -5,7 +5,6 @@
 {% block content %}
 
 {% if not edit_mode %}
-<!-- ---- First-run step indicator ---- -->
 <div class="step-indicator animate-fade-in">
   <div class="step is-done">
     <div class="step__dot">
@@ -28,7 +27,6 @@
 </div>
 {% endif %}
 
-<!-- ---- Page header ---- -->
 <header class="page-header animate-fade-up">
   <div class="page-header__eyebrow">
     {% if edit_mode %}Account{% else %}Getting started{% endif %}
@@ -45,31 +43,48 @@
   </p>
 </header>
 
-<!-- ---- Form card ---- -->
 <div class="card animate-fade-up delay-1" style="max-width: 540px;">
+  <form method="POST"
+	action="{{ url_for('dashboard.account_edit') if edit_mode else url_for('dashboard.account_setup') }}"
+	enctype="multipart/form-data"
+	novalidate>
+		
+	<!-- Avatar -->
+    <div class="form-group" style="align-items: center; margin-bottom: var(--space-6);">
+      <label class="form-label">Profile photo</label>
+      <div style="display: flex; align-items: center; gap: var(--space-5); margin-top: var(--space-2);">
+        <div class="avatar avatar--lg avatar--accent" id="avatar-preview">
+          {% if account.avatar_url %}
+          <img src="{{ account.avatar_url }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:9999px;" />
+          {% else %}
+          {{ (account.first_name[0] ~ account.last_name[0]) | upper if account.first_name else '?' }}
+          {% endif %}
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+          <label for="avatar" class="btn btn--ghost btn--sm" style="cursor: pointer;">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8.5 1.5l2 2L4 11H2v-2L8.5 1.5z"/>
+            </svg>
+            Change photo
+          </label>
+          <input type="file" id="avatar" name="avatar" accept="image/*" style="display:none;" />
+          <span class="form-hint">PNG, JPG, GIF, WEBP — max 5MB</span>
+        </div>
+      </div>
+      {% if errors.avatar %}
+      <span class="form-error" role="alert">{{ errors.avatar }}</span>
+      {% endif %}
+    </div>
 
-  <form
-    method="POST"
-    action="{{ url_for('account_edit') if edit_mode else url_for('account_setup') }}"
-    novalidate
-  >
+    <div class="form-divider"></div>
 
-    <!-- Name row -->
     <div class="form-row">
-
       <div class="form-group">
         <label for="first_name" class="form-label">First name</label>
-        <input
-          type="text"
-          id="first_name"
-          name="first_name"
-          class="form-input {% if errors.first_name %}is-error{% endif %}"
-          value="{{ form_data.get('first_name', '') }}"
-          placeholder="First"
-          autocomplete="given-name"
-          autofocus
-          required
-        />
+        <input type="text" id="first_name" name="first_name"
+               class="form-input {% if errors.first_name %}is-error{% endif %}"
+               value="{{ form_data.get('first_name', '') }}"
+               placeholder="First" autocomplete="given-name" autofocus required />
         {% if errors.first_name %}
         <span class="form-error" role="alert">
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -84,16 +99,10 @@
 
       <div class="form-group">
         <label for="last_name" class="form-label">Last name</label>
-        <input
-          type="text"
-          id="last_name"
-          name="last_name"
-          class="form-input {% if errors.last_name %}is-error{% endif %}"
-          value="{{ form_data.get('last_name', '') }}"
-          placeholder="Last"
-          autocomplete="family-name"
-          required
-        />
+        <input type="text" id="last_name" name="last_name"
+               class="form-input {% if errors.last_name %}is-error{% endif %}"
+               value="{{ form_data.get('last_name', '') }}"
+               placeholder="Last" autocomplete="family-name" required />
         {% if errors.last_name %}
         <span class="form-error" role="alert">
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -105,24 +114,16 @@
         </span>
         {% endif %}
       </div>
-
-    </div><!-- /form-row -->
+    </div>
 
     <div class="form-divider"></div>
 
-    <!-- Email -->
     <div class="form-group">
       <label for="email" class="form-label">Email address</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        class="form-input {% if errors.email %}is-error{% endif %}"
-        value="{{ form_data.get('email', '') }}"
-        placeholder="you@example.com"
-        autocomplete="email"
-        required
-      />
+      <input type="email" id="email" name="email"
+             class="form-input {% if errors.email %}is-error{% endif %}"
+             value="{{ form_data.get('email', '') }}"
+             placeholder="you@example.com" autocomplete="email" required />
       {% if errors.email %}
       <span class="form-error" role="alert">
         <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -133,21 +134,14 @@
         {{ errors.email }}
       </span>
       {% elif not edit_mode %}
-      <span class="form-hint">
-        We'll send a confirmation link after you save.
-      </span>
+      <span class="form-hint">We'll send a confirmation link after you save.</span>
       {% elif edit_mode and account.email_confirmed %}
-      <span class="form-hint text-success">
-        ✓ Confirmed — changing this will require re-confirmation.
-      </span>
+      <span class="form-hint text-success">✔ Confirmed — changing this will require re-confirmation.</span>
       {% else %}
-      <span class="form-hint text-warning">
-        Not yet confirmed.
-      </span>
+      <span class="form-hint text-warning">Not yet confirmed.</span>
       {% endif %}
     </div>
 
-    <!-- Actions -->
     <div class="form-actions">
       <button type="submit" class="btn btn--primary">
         {% if edit_mode %}Save changes{% else %}Continue{% endif %}
@@ -157,12 +151,34 @@
         </svg>
       </button>
       {% if edit_mode %}
-      <a href="{{ url_for('account_profile') }}" class="btn btn--link text-secondary">Cancel</a>
+      <a href="{{ url_for('dashboard.account_profile') }}" class="btn btn--link text-secondary">Cancel</a>
       {% endif %}
     </div>
 
   </form>
+</div>
+{% block extra_js %}
+<script>
+(function () {
+  const input   = document.getElementById('avatar');
+  const preview = document.getElementById('avatar-preview');
+  if (!input) return;
 
-</div><!-- /card -->
-
+  input.addEventListener('change', function () {
+    const file = input.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File exceeds 5MB limit.');
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.innerHTML = `<img src="${e.target.result}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:9999px;" />`;
+    };
+    reader.readAsDataURL(file);
+  });
+})();
+</script>
+{% endblock %}
 {% endblock %}

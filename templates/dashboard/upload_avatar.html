@@ -31,7 +31,7 @@
 </header>
 
 <div class="card animate-fade-up delay-1" style="max-width: 480px;">
-  <form method="POST" action="{{ url_for('account_avatar') }}" enctype="multipart/form-data">
+  <form method="POST" action="{{ url_for('dashboard.account_avatar') }}" enctype="multipart/form-data">
 
     {% if error %}
     <div class="flash flash--danger mb-6" role="alert">
@@ -83,9 +83,17 @@
   const preview = document.getElementById('preview-wrap');
   const img     = document.getElementById('preview-img');
   const btn     = document.getElementById('upload-btn');
+  const MAX_MB  = 5;
 
   function loadFile(file) {
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file || !file.type.startsWith('image/')) {
+      showError('Please select a valid image file.');
+      return;
+    }
+    if (file.size > MAX_MB * 1024 * 1024) {
+      showError('File exceeds 5MB limit.');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = e => {
       img.src = e.target.result;
@@ -93,16 +101,31 @@
       prompt.style.display  = 'none';
       btn.disabled = false;
       zone.classList.add('has-file');
+      clearError();
     };
     reader.readAsDataURL(file);
   }
 
-  // Click to browse
+  function showError(msg) {
+    let el = document.getElementById('js-upload-error');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'js-upload-error';
+      el.className = 'flash flash--danger mb-6';
+      zone.parentNode.insertBefore(el, zone);
+    }
+    el.textContent = msg;
+  }
+
+  function clearError() {
+    const el = document.getElementById('js-upload-error');
+    if (el) el.remove();
+  }
+
   zone.addEventListener('click', () => input.click());
   zone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') input.click(); });
   input.addEventListener('change', () => loadFile(input.files[0]));
 
-  // Drag and drop
   zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('is-dragover'); });
   zone.addEventListener('dragleave', ()  => zone.classList.remove('is-dragover'));
   zone.addEventListener('drop', e => {
@@ -112,4 +135,5 @@
   });
 })();
 </script>
+
 {% endblock %}

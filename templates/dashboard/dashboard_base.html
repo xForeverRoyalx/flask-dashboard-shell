@@ -31,7 +31,7 @@
       {% if auth_mode | default(false) %}
         <!-- Auth mode: logo only -->
         <div class="sidebar__logo-row">
-          <a href="{{ url_for('index') }}">
+          <a href="{{ url_for('dashboard.index') }}">
             <div class="sidebar__logo-icon">DS</div>
           </a>
         </div>
@@ -50,7 +50,7 @@
 
           <span class="sidebar__section-label">Main</span>
 
-          <a href="{{ url_for('overview') }}"
+          <a href="{{ url_for('dashboard.overview') }}"
              class="nav-item {% if request.endpoint == 'overview' %}is-active{% endif %}">
             <svg class="nav-item__icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="2" width="6" height="6" rx="1"/><rect x="10" y="2" width="6" height="6" rx="1"/>
@@ -87,17 +87,21 @@
 
       <!-- Window topbar: logo upper-left, user chip upper-right -->
       <div class="window-topbar">
-        <a href="{{ url_for('index') }}" class="window-topbar__logo">
+        <a href="{{ url_for('dashboard.index') }}" class="window-topbar__logo">
           <div class="sidebar__logo-icon">DS</div>
           <span class="window-topbar__logo-name">{{ app_name | default('DashShell') }}</span>
         </a>
 		<div class="window-topbar__right">
           <div class="user-chip-wrap" id="user-chip-wrap">
             {% if account is defined and account.profile_complete %}
-            <button class="user-chip" id="user-chip-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
-              <div class="user-chip__avatar" aria-hidden="true">
-                {{ (account.first_name[0] ~ account.last_name[0]) | upper if account.first_name else '?' }}
-              </div>
+              <button class="user-chip" id="user-chip-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+			  <div class="user-chip__avatar" aria-hidden="true">
+			    {% if current_user.avatar_url %}
+			    <img src="{{ current_user.avatar_url }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:9999px;" />
+			    {% else %}
+			    {{ (current_user.first_name[0] ~ current_user.last_name[0]) | upper if current_user.first_name else '?' }}
+			    {% endif %}
+			  </div>
               <div class="user-chip__info">
                 <div class="user-chip__name">{{ account.first_name }} {{ account.last_name }}</div>
                 <div class="user-chip__role">Account</div>
@@ -113,10 +117,10 @@
             </button>
             {% endif %}
             <div class="user-chip-dropdown" id="user-chip-dropdown" role="menu" aria-hidden="true">
-              <a href="{{ url_for('account_profile') }}" class="user-chip-dropdown__item" role="menuitem">Profile</a>
-              <a href="{{ url_for('account_edit') }}" class="user-chip-dropdown__item" role="menuitem">Edit Account</a>
+              <a href="{{ url_for('dashboard.account_profile') }}" class="user-chip-dropdown__item" role="menuitem">Profile</a>
+              <a href="{{ url_for('dashboard.account_edit') }}" class="user-chip-dropdown__item" role="menuitem">Edit Account</a>
               <div class="user-chip-dropdown__divider"></div>
-              <a href="{{ url_for('logout') }}" class="user-chip-dropdown__item user-chip-dropdown__item--danger" role="menuitem">Log out</a>
+              <a href="{{ url_for('dashboard.logout') }}" class="user-chip-dropdown__item user-chip-dropdown__item--danger" role="menuitem">Log out</a>
             </div>
           </div>
         </div>
@@ -161,7 +165,7 @@
        MOBILE FOOTER NAV
        ====================================================================== -->
   <nav class="mobile-footer-nav" aria-label="Quick navigation">
-    <a href="{{ url_for('account_profile') }}"
+    <a href="{{ url_for('dashboard.account_profile') }}"
        class="mobile-footer-nav__item {% if request.endpoint == 'account_profile' %}is-active{% endif %}">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
         <rect x="2" y="2" width="7" height="7" rx="1"/>
@@ -172,7 +176,7 @@
       Home
     </a>
 
-    <a href="{{ url_for('account_profile') }}"
+    <a href="{{ url_for('dashboard.account_profile') }}"
        class="mobile-footer-nav__item {% if request.endpoint in ('account_profile','account_edit','account_setup') %}is-active{% endif %}">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
         <circle cx="10" cy="7" r="4"/>

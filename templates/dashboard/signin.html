@@ -34,7 +34,7 @@
 
   <div class="auth-divider">or</div>
 
-  <form method="POST" action="{{ url_for('signin') }}" novalidate>
+  <form method="POST" action="{{ url_for('dashboard.signin') }}" novalidate>
     <div class="form-group">
       <label for="email" class="form-label">Email or username</label>
       <input type="email" id="email" name="email" class="form-input"
@@ -54,7 +54,7 @@
   </form>
 
   <p class="auth-footer-text">
-    Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a>
+    Don't have an account? <a href="{{ url_for('dashboard.signup') }}">Sign up</a>
   </p>
 
 </div>
