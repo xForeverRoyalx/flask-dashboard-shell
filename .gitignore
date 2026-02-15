@@ -37,5 +37,9 @@ Thumbs.db
 .idea/
 *.swp
 
+# Images
+static/uploads
+
+# LLM Standards
 standards.txt
 update_standards.py

@@ -216,12 +216,7 @@
   gap: var(--space-4);
   flex-shrink: 0;
   z-index: var(--z-raised);
-  background: linear-gradient(
-    to bottom,
-    var(--color-bg-page) 0%,
-    var(--color-bg-page) 60%,
-    transparent 100%
-  );
+  background: transparent;
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
